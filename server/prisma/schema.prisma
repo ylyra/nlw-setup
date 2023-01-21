@@ -5,6 +5,15 @@ generator client {
   provider = "prisma-client-js"
 }
 
+//generator typegraphql {
+//  provider = "typegraphql-prisma"
+//  output   = "../src/generated/typegraphql-prisma"
+//}
+
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
