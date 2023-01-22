@@ -23,7 +23,8 @@ export function Input<TControl extends Control<any>>({
 
   return (
     <TextInput
-      className="h-12 pl-4 rounded-lg mt-3 bg-zinc-800 text-white focus:border-2 focus:border-green-600"
+      className="h-12 pl-4 rounded-lg mt-3 bg-zinc-9
+      00 text-white focus:border-2 focus:border-green-600"
       value={field.value}
       onChangeText={field.onChange}
       placeholderTextColor={colors.zinc[400]}
