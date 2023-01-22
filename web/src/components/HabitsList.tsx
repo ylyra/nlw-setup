@@ -1,12 +1,11 @@
 import * as Checkbox from "@radix-ui/react-checkbox";
-import dayjs from "dayjs";
 import { Check } from "phosphor-react";
 import { useEffect, useState } from "react";
 import { api } from "../lib/axios";
 
 interface HabitLisProps {
   date: Date;
-  onCompletedChanged: (completed: number) => void;
+  onCompletedChanged: (completed: number, amount: number) => void;
 }
 
 interface HabitInfo {
@@ -32,10 +31,6 @@ export function HabitsList({ date, onCompletedChanged }: HabitLisProps) {
   }, []);
 
   async function handleToggleHabit(habitId: string) {
-    const isHabitAlreadyCompleted = habits.some(
-      (habit) => habit.id === habitId && habit.completed
-    );
-
     await api.patch(`/habits/${habitId}/toggle`, {
       date: date.toISOString(),
     });
@@ -59,10 +54,8 @@ export function HabitsList({ date, onCompletedChanged }: HabitLisProps) {
       return newHabits;
     });
 
-    onCompletedChanged(completedHabits.length);
+    onCompletedChanged(completedHabits.length, habits.length);
   }
-
-  const isDateInPast = dayjs(date).endOf("day").isBefore(new Date());
 
   return (
     <div className="mt-6 flex flex-col gap-3">
@@ -71,7 +64,6 @@ export function HabitsList({ date, onCompletedChanged }: HabitLisProps) {
           key={habit.id}
           onCheckedChange={() => handleToggleHabit(habit.id)}
           checked={habit.completed}
-          disabled={isDateInPast}
           className="flex items-center gap-3 group focus:outline-none disabled:cursor-not-allowed"
         >
           <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-zinc-900 border-2 border-zinc-800 group-data-[state=checked]:bg-green-500 group-data-[state=checked]:border-green-50 transition-colors group-focus:ring-2 group-focus:ring-violet-600 group-focus:ring-offset-2 group-focus:ring-offset-background">

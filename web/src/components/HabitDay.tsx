@@ -1,7 +1,7 @@
 import * as Popover from "@radix-ui/react-popover";
 import clsx from "clsx";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { HabitsList } from "./HabitsList";
 import { ProgressBar } from "./ProgressBar";
@@ -9,22 +9,31 @@ import { ProgressBar } from "./ProgressBar";
 interface HabitProps {
   date: Date;
   defaultCompleted?: number;
-  amount?: number;
+  defaultAmount?: number;
 }
 
-export function HabitDay({ amount, defaultCompleted, date }: HabitProps) {
-  const [completed, setCompleted] = useState(defaultCompleted || 0);
+export function HabitDay({
+  defaultAmount,
+  defaultCompleted,
+  date,
+}: HabitProps) {
+  const [completed, setCompleted] = useState(defaultCompleted);
+  const [amount, setAmount] = useState(defaultAmount);
 
-  const comlpetedPercentage =
-    amount && amount > 0 ? Math.round((completed / amount) * 100) : 0;
+  const comlpetedPercentage = useMemo(() => {
+    return completed && amount && amount > 0
+      ? Math.round((completed / amount) * 100)
+      : 0;
+  }, [completed, amount]);
 
   const dayAndMonth = dayjs(date).format("DD/MM");
   const dayOfWeek = dayjs(date).format("dddd");
   const today = dayjs().startOf("day").toDate();
   const isCurrentDay = dayjs(date).startOf("day").isSame(today);
 
-  function handleCompletedChaged(completed: number) {
+  function handleCompletedChaged(completed: number, amount: number) {
     setCompleted(completed);
+    setAmount(amount);
   }
 
   return (

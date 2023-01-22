@@ -34,7 +34,7 @@ export function SummaryTable() {
             <HabitDay
               key={date.toISOString()}
               date={date}
-              amount={dayInSummary?.amount}
+              defaultAmount={dayInSummary?.amount}
               defaultCompleted={dayInSummary?.completed}
             />
           );
