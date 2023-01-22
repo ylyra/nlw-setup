@@ -13,3 +13,7 @@ export const createHabitBodySchema = z.object({
 export const getDayParamasSchema = z.object({
   date: z.coerce.date(),
 });
+
+export const toggleHabitParamsSchema = z.object({
+  id: z.string().uuid(),
+});

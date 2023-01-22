@@ -2,17 +2,23 @@ import dayjs from "dayjs";
 import { FastifyInstance } from "fastify";
 import { prisma } from "./lib/prisma";
 import { createResponseError } from "./utils/response.error";
-import { createHabitBodySchema, getDayParamasSchema } from "./utils/schemas";
+import {
+  createHabitBodySchema,
+  getDayParamasSchema,
+  toggleHabitParamsSchema,
+} from "./utils/schemas";
 
 export async function appRoutes(app: FastifyInstance) {
   app.post("/habits", async (request, ctx) => {
     try {
       const { title, weekDays } = createHabitBodySchema.parse(request.body);
 
+      const today = dayjs().startOf("day").toDate();
+
       const habit = await prisma.habit.create({
         data: {
           title,
-          created_at: dayjs().startOf("day").toDate(),
+          created_at: today,
           weekDays: {
             create: weekDays.map((weekDay) => ({ week_day: weekDay })),
           },
@@ -61,7 +67,60 @@ export async function appRoutes(app: FastifyInstance) {
           false,
       }));
 
-      return ctx.send(completedHabits);
+      return ctx.send({
+        habits: completedHabits,
+      });
+    } catch (error) {
+      return createResponseError(error, ctx);
+    }
+  });
+
+  app.patch("/habits/:id/toggle", async (request, ctx) => {
+    try {
+      const { id } = toggleHabitParamsSchema.parse(request.params);
+      const { date } = getDayParamasSchema.parse(request.body);
+
+      const parsedDate = dayjs(date).startOf("day").toDate();
+
+      let day = await prisma.day.findUnique({
+        where: {
+          date: parsedDate,
+        },
+      });
+
+      if (!day) {
+        day = await prisma.day.create({
+          data: {
+            date: parsedDate,
+          },
+        });
+      }
+
+      const dayHabit = await prisma.dayHabit.findUnique({
+        where: {
+          day_id_habit_id: {
+            day_id: day.id,
+            habit_id: id,
+          },
+        },
+      });
+
+      if (dayHabit) {
+        await prisma.dayHabit.delete({
+          where: {
+            id: dayHabit.id,
+          },
+        });
+      } else {
+        await prisma.dayHabit.create({
+          data: {
+            day_id: day.id,
+            habit_id: id,
+          },
+        });
+      }
+
+      return ctx.status(204).send();
     } catch (error) {
       return createResponseError(error, ctx);
     }
