@@ -6,6 +6,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { api } from "../lib/axios";
+import { ErrorMessage } from "./ErrorMessage";
 
 const availableWeekDays = [
   "Domingo",
@@ -68,6 +69,10 @@ export function NewHabitForm() {
           autoFocus
           {...register("title")}
         />
+
+        {formState.errors.title && (
+          <ErrorMessage>{formState.errors.title.message}</ErrorMessage>
+        )}
       </div>
 
       <div className="mt-4">
@@ -106,6 +111,9 @@ export function NewHabitForm() {
               </>
             )}
           />
+          {formState.errors.weekDays && (
+            <ErrorMessage>{formState.errors.weekDays.message}</ErrorMessage>
+          )}
         </div>
       </div>
 
