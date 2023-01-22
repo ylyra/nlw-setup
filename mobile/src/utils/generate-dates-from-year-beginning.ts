@@ -7,5 +7,5 @@ export function generateDaysBefore() {
 
   return Array.from({ length: totalDaysToGenerate }, (_, i) =>
     today.subtract(i, "day").toDate()
-  );
+  ).reverse();
 }
