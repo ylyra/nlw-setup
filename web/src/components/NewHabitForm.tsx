@@ -80,41 +80,39 @@ export function NewHabitForm() {
           Qual a recorrência?
         </label>
 
-        <div className="flex flex-col gap-2 mt-3">
-          <Controller
-            control={control}
-            name="weekDays"
-            render={({ field: { onChange, value } }) => (
-              <>
-                {availableWeekDays.map((weekDay, index) => (
-                  <Checkbox.Root
-                    key={weekDay}
-                    className="flex items-center gap-3 group focus:outline-none"
-                    checked={value.includes(index)}
-                    onCheckedChange={() => {
-                      const newWeekDays = value.includes(index)
-                        ? value.filter((day) => day !== index)
-                        : [...value, index];
+        <Controller
+          control={control}
+          name="weekDays"
+          render={({ field: { onChange, value } }) => (
+            <div className="flex flex-col gap-2 mt-3">
+              {availableWeekDays.map((weekDay, index) => (
+                <Checkbox.Root
+                  key={weekDay}
+                  className="flex items-center gap-3 group focus:outline-none"
+                  checked={value.includes(index)}
+                  onCheckedChange={() => {
+                    const newWeekDays = value.includes(index)
+                      ? value.filter((day) => day !== index)
+                      : [...value, index];
 
-                      onChange(newWeekDays);
-                    }}
-                  >
-                    <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-zinc-900 border-2 border-zinc-800 group-data-[state=checked]:bg-green-500 group-data-[state=checked]:border-green-50 transition-colors group-focus:ring-2 group-focus:ring-violet-600 group-focus:ring-offset-2 group-focus:ring-offset-background">
-                      <Checkbox.Indicator>
-                        <Check size={20} className="text-white" />
-                      </Checkbox.Indicator>
-                    </div>
+                    onChange(newWeekDays);
+                  }}
+                >
+                  <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-zinc-900 border-2 border-zinc-800 group-data-[state=checked]:bg-green-500 group-data-[state=checked]:border-green-50 transition-colors group-focus:ring-2 group-focus:ring-violet-600 group-focus:ring-offset-2 group-focus:ring-offset-background">
+                    <Checkbox.Indicator>
+                      <Check size={20} className="text-white" />
+                    </Checkbox.Indicator>
+                  </div>
 
-                    <span className="text-white leading-tight">{weekDay}</span>
-                  </Checkbox.Root>
-                ))}
-              </>
-            )}
-          />
-          {formState.errors.weekDays && (
-            <ErrorMessage>{formState.errors.weekDays.message}</ErrorMessage>
+                  <span className="text-white leading-tight">{weekDay}</span>
+                </Checkbox.Root>
+              ))}
+            </div>
           )}
-        </div>
+        />
+        {formState.errors.weekDays && (
+          <ErrorMessage>{formState.errors.weekDays.message}</ErrorMessage>
+        )}
       </div>
 
       <button
