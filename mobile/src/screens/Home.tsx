@@ -1,15 +1,34 @@
 import { useNavigation } from "@react-navigation/native";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 
 import { DAY_SIZE, HabitDay } from "../components/HabitDay";
 import { Header } from "../components/Header";
+import { api } from "../lib/axios";
 import { generateDaysBefore } from "../utils/generate-dates-from-year-beginning";
 
 const weekDays = ["D", "S", "T", "Q", "Q", "S", "S"];
 const summaryDates = generateDaysBefore();
 
+type Summary = {
+  id: string;
+  date: string;
+  amount: number;
+  completed: number;
+}[];
+
 export function Home() {
   const { navigate } = useNavigation();
+  const [summary, setSummary] = useState<Summary>([]);
+
+  useEffect(() => {
+    api.get("summary").then((response) => {
+      setSummary(response.data);
+    });
+  }, []);
+
+  console.log(summary);
 
   return (
     <View className="flex-1 bg-background px-8 pt-16">
@@ -36,17 +55,30 @@ export function Home() {
         }}
       >
         <View className="flex-row flex-wrap">
-          {summaryDates.map((date) => (
-            <HabitDay
-              key={date.toISOString()}
-              date={date}
-              onPress={() =>
-                navigate("habit", {
-                  date: date.toISOString(),
-                })
-              }
-            />
-          ))}
+          {summary.length > 0 &&
+            summaryDates.map((date) => {
+              const dayInSummary = summary.find((day) => {
+                return dayjs(date).isSame(day.date, "day");
+              });
+
+              return (
+                <HabitDay
+                  key={date.toISOString()}
+                  date={date}
+                  onPress={() =>
+                    navigate("habit", {
+                      date: date.toISOString(),
+                    })
+                  }
+                  amountCompleted={
+                    dayInSummary?.completed ? dayInSummary.completed : 0
+                  }
+                  amountOfHabits={
+                    dayInSummary?.amount ? dayInSummary.amount : 0
+                  }
+                />
+              );
+            })}
         </View>
       </ScrollView>
     </View>

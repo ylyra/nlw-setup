@@ -1,8 +1,8 @@
 import { Feather } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import clsx from "clsx";
-import { Controller, useForm } from "react-hook-form";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { z } from "zod";
 
 import colors from "tailwindcss/colors";
@@ -10,6 +10,7 @@ import { BackButton } from "../components/BackButton";
 import { Checkbox } from "../components/Checkbox";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { Input } from "../components/Input";
+import { api } from "../lib/axios";
 
 const availableWeekDays = [
   "Domingo",
@@ -22,7 +23,13 @@ const availableWeekDays = [
 ];
 
 const formSchema = z.object({
-  title: z.string().min(3, "O título deve ter no mínimo 3 caracteres"),
+  title: z
+    .string()
+    .min(3, "O título deve ter no mínimo 3 caracteres")
+    .refine(
+      (value) => value.trim().length > 2,
+      "O título deve ter no mínimo 3 caracteres"
+    ),
   weekDays: z.array(
     z
       .number()
@@ -31,17 +38,29 @@ const formSchema = z.object({
   ),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
 export function New() {
-  const { control, handleSubmit, formState } = useForm({
+  const { control, handleSubmit, formState, reset } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      weekDays: [0],
+      weekDays: [],
     },
   });
 
-  const onNewHabitSubmit = (data: { title: string }) => {
-    console.log(data);
+  const onNewHabitSubmit: SubmitHandler<FormValues> = async ({
+    title,
+    weekDays,
+  }) => {
+    await api.post("habits", {
+      title,
+      weekDays,
+    });
+
+    Alert.alert("Criado", "Hábito criado com sucesso!");
+
+    reset();
   };
 
   return (

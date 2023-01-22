@@ -1,3 +1,4 @@
 export function generateProgressPercentage(total: number, completed: number) {
-  return Math.round((completed / total) * 100);
+  const percentage = Math.round((completed * 100) / total);
+  return percentage <= 100 ? percentage : 100;
 }
