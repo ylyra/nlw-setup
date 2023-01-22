@@ -100,22 +100,22 @@ export function New() {
             <ErrorMessage>{formState.errors.weekDays.message}</ErrorMessage>
           )}
         </View>
-
-        <TouchableOpacity
-          onPress={handleSubmit(onNewHabitSubmit)}
-          activeOpacity={0.7}
-          className={clsx(
-            "mt-6 rounded-lg p-4 flex items-center justify-center font-semibold bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-zinc-900 flex-row",
-            {
-              "cursor-not-allowed opacity-50": formState.isSubmitting,
-              "hover:bg-green-500": !formState.isSubmitting,
-            }
-          )}
-        >
-          <Feather name="check" size={20} color={colors.white} />
-          <Text className="text-white ml-2">Criar hábito</Text>
-        </TouchableOpacity>
       </ScrollView>
+
+      <TouchableOpacity
+        onPress={handleSubmit(onNewHabitSubmit)}
+        activeOpacity={0.7}
+        className={clsx(
+          "mt-6 rounded-lg p-4 flex items-center justify-center font-semibold bg-green-600 transition-colors",
+          {
+            "cursor-not-allowed opacity-50": formState.isSubmitting,
+            "hover:bg-green-500": !formState.isSubmitting,
+          }
+        )}
+      >
+        <Feather name="check" size={20} color={colors.white} />
+        <Text className="text-white ml-2">Criar hábito</Text>
+      </TouchableOpacity>
     </View>
   );
 }
