@@ -9,3 +9,7 @@ export const createHabitBodySchema = z.object({
       .max(6, "Week day must be between 0 and 6")
   ),
 });
+
+export const getDayParamasSchema = z.object({
+  date: z.coerce.date(),
+});

@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import { FastifyInstance } from "fastify";
-import { ZodError } from "zod";
 import { prisma } from "./lib/prisma";
-import { createHabitBodySchema } from "./utils/schemas";
+import { createResponseError } from "./utils/response.error";
+import { createHabitBodySchema, getDayParamasSchema } from "./utils/schemas";
 
 export async function appRoutes(app: FastifyInstance) {
   app.post("/habits", async (request, ctx) => {
@@ -21,19 +21,49 @@ export async function appRoutes(app: FastifyInstance) {
 
       return ctx.status(201).send(habit);
     } catch (error) {
-      if (error instanceof ZodError) {
-        return {
-          statusCode: 400,
-          message: "Zod errors",
-          errors: error.errors,
-        };
-      }
+      return createResponseError(error, ctx);
+    }
+  });
 
-      return {
-        statusCode: 500,
-        message: "Internal server error",
-        errors: [error],
-      };
+  app.get("/habits/day", async (request, ctx) => {
+    try {
+      const { date } = getDayParamasSchema.parse(request.query);
+
+      const parsedDate = dayjs(date).startOf("day");
+      const weekDay = parsedDate.day();
+
+      const possibleHabits = await prisma.habit.findMany({
+        where: {
+          created_at: {
+            lte: date,
+          },
+          weekDays: {
+            some: {
+              week_day: weekDay,
+            },
+          },
+        },
+      });
+
+      const day = await prisma.day.findUnique({
+        where: {
+          date: parsedDate.toDate(),
+        },
+        include: {
+          dayHabits: true,
+        },
+      });
+
+      const completedHabits = possibleHabits.map((habit) => ({
+        ...habit,
+        completed:
+          day?.dayHabits.some((dayHabit) => dayHabit.habit_id === habit.id) ??
+          false,
+      }));
+
+      return ctx.send(completedHabits);
+    } catch (error) {
+      return createResponseError(error, ctx);
     }
   });
 }
