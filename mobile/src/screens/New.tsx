@@ -58,7 +58,11 @@ export function New() {
             Qual seu comprometimento?
           </Text>
 
-          <Input control={control} name="title" />
+          <Input
+            control={control}
+            name="title"
+            placeholder="ex.: Exercícios, dormir bem, etc..."
+          />
 
           {formState.errors.title && (
             <ErrorMessage>{formState.errors.title.message}</ErrorMessage>
@@ -106,7 +110,7 @@ export function New() {
         onPress={handleSubmit(onNewHabitSubmit)}
         activeOpacity={0.7}
         className={clsx(
-          "mt-6 rounded-lg p-4 flex items-center justify-center font-semibold bg-green-600 transition-colors",
+          "mt-6 rounded-lg p-4 flex-row items-center justify-center font-semibold bg-green-600 transition-colors",
           {
             "cursor-not-allowed opacity-50": formState.isSubmitting,
             "hover:bg-green-500": !formState.isSubmitting,
