@@ -17,3 +17,14 @@ export const getDayParamasSchema = z.object({
 export const toggleHabitParamsSchema = z.object({
   id: z.string().uuid(),
 });
+
+export const sendPushBody = z.object({
+  subscription: z.object({
+    endpoint: z.string(),
+    expirationTime: z.string().nullable(),
+    keys: z.object({
+      p256dh: z.string(),
+      auth: z.string(),
+    }),
+  }),
+});

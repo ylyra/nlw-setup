@@ -2,6 +2,7 @@ import { env } from "./env";
 
 import cors from "@fastify/cors";
 import fastify from "fastify";
+import { notificationRoutes } from "./notifications-routes";
 import { appRoutes } from "./routes";
 
 const app = fastify();
@@ -9,6 +10,7 @@ const app = fastify();
 app.register(cors);
 
 app.register(appRoutes);
+app.register(notificationRoutes);
 
 app.listen(
   {

@@ -11,6 +11,8 @@ const withDevDefault = <T extends z.ZodTypeAny>(schema: T, val: TypeOf<T>) =>
 const schema = z.object({
   PORT: withDevDefault(z.string(), "3333").transform(Number),
   DATABASE_URL: z.string(),
+  WEB_PUSH_PRIVATE_KEY: z.string(),
+  WEB_PUSH_PUBLIC_KEY: z.string(),
 });
 
 const parsed = schema.safeParse(process.env);
