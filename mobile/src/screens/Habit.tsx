@@ -5,6 +5,7 @@ import { ScrollView, Text, View } from "react-native";
 
 import { BackButton } from "../components/BackButton";
 import { Checkbox } from "../components/Checkbox";
+import { HabitsEmpty } from "../components/HabitsEmpty";
 import { ProgressBar } from "../components/ProgressBar";
 import { api } from "../lib/axios";
 import { generateProgressPercentage } from "../utils/generate-progress-percentage";
@@ -82,15 +83,19 @@ export function Habit() {
         <ProgressBar progress={amountAccomplishedPercentage} />
 
         <View className="mt-6">
-          {habits.map((habit) => (
-            <Checkbox
-              key={habit.id}
-              title="Dormir bem"
-              onChange={() => handleToggleHabit(habit.id)}
-              checked={habit.completed}
-              value={habit.id}
-            />
-          ))}
+          {habits.length > 0 ? (
+            habits.map((habit) => (
+              <Checkbox
+                key={habit.id}
+                title="Dormir bem"
+                onChange={() => handleToggleHabit(habit.id)}
+                checked={habit.completed}
+                value={habit.id}
+              />
+            ))
+          ) : (
+            <HabitsEmpty />
+          )}
         </View>
       </ScrollView>
     </View>
